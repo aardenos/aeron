@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Æron Time — The Hydrogen Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel+Decorative:wght@400;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:     #05050f;
+  --deep:     #0a0a1a;
+  --surface:  #0f0f22;
+  --panel:    #141428;
+  --border:   #2a2a4a;
+  --gold:     #c8a84b;
+  --gold-dim: #7a6430;
+  --silver:   #8899bb;
+  --star:     #dde4f0;
+  --text:     #e0dcd0;
+  --muted:    #888070;
+  --accent:   #4a7acc;
+  --ophiuchus:#7a4acc;
+  --red:      #cc4a4a;
+  --green:    #4acc7a;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── STAR FIELD ──────────────────────────────────────────────── */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 40%  8%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 62%, rgba(255,255,255,.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 82% 78%, rgba(255,255,255,.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 92% 12%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at  5% 88%, rgba(255,255,255,.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 72%, rgba(255,255,255,.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 65% 50%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 55%, rgba(200,168, 75,.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 78% 45%, rgba(136,153,187,.4) 0%, transparent 100%),
+    radial-gradient(2px 2px at 48% 30%, rgba(255,255,255,.2) 0%, transparent 100%),
+    radial-gradient(2px 2px at 88% 60%, rgba(200,168, 75,.2) 0%, transparent 100%);
+  pointer-events:none;
+}
+
+/* ── LAYOUT ──────────────────────────────────────────────────── */
+.page { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:0 2rem; }
+section { padding:5rem 0; border-bottom:1px solid var(--border); }
+section:last-child { border-bottom:none; }
+
+/* ── TYPOGRAPHY ──────────────────────────────────────────────── */
+h1 { font-family:'Cinzel Decorative',serif; font-size:clamp(2rem,6vw,4rem); font-weight:700;
+     color:var(--gold); letter-spacing:.05em; line-height:1.1; }
+h2 { font-family:'Cinzel',serif; font-size:clamp(1.2rem,3vw,1.8rem); font-weight:600;
+     color:var(--gold); letter-spacing:.12em; text-transform:uppercase; margin-bottom:1.5rem; }
+h3 { font-family:'Cinzel',serif; font-size:1.1rem; font-weight:400;
+     color:var(--silver); letter-spacing:.1em; text-transform:uppercase; margin-bottom:.8rem; }
+h4 { font-family:'Cinzel',serif; font-size:.9rem; color:var(--gold-dim);
+     letter-spacing:.15em; text-transform:uppercase; margin-bottom:.5rem; }
+
+p { margin-bottom:1.2rem; }
+em { color:var(--gold); font-style:italic; }
+strong { color:var(--star); font-weight:500; }
+
+.rule       { width:100%; height:1px; background:linear-gradient(90deg,transparent,var(--gold-dim),transparent); margin:2rem 0; }
+.small-rule { width:60px; height:1px; background:var(--gold-dim); margin:1rem 0; }
+
+.tag {
+  display:inline-block; font-family:'Cinzel',serif; font-size:.65rem;
+  letter-spacing:.2em; text-transform:uppercase; padding:.2em .7em;
+  border:1px solid var(--gold-dim); color:var(--gold-dim); border-radius:2px;
+  vertical-align:middle; margin-left:.5em;
+}
+
+/* ── HERO ────────────────────────────────────────────────────── */
+#hero {
+  min-height:100vh;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  text-align:center; border-bottom:1px solid var(--border);
+  padding:4rem 1rem;
+  position:relative;
+}
+
+.hero-subtitle {
+  font-family:'Cinzel',serif; font-size:.85rem; letter-spacing:.4em;
+  text-transform:uppercase; color:var(--silver); margin-bottom:2rem;
+}
+
+.authorship {
+  font-family:'EB Garamond',serif; font-size:.9rem; color:var(--muted);
+  font-style:italic; margin-top:1rem; letter-spacing:.05em;
+}
+
+/* ── LIVE CLOCK ──────────────────────────────────────────────── */
+.orrery {
+  position:relative; width:280px; height:280px; margin:3rem auto 0;
+}
+.orrery-ring {
+  position:absolute; border-radius:50%; border:1px solid;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+}
+.ring-outer { width:260px; height:260px; border-color:var(--border); }
+.ring-mid   { width:200px; height:200px; border-color:var(--gold-dim); }
+.ring-inner { width:140px; height:140px; border-color:var(--silver); }
+.ring-core  { width:80px;  height:80px;  border-color:var(--gold);
+              background:radial-gradient(circle,#1a1430,var(--void));
+              animation:pulse-glow 4s ease-in-out infinite; }
+
+/* Dots on the animated rings */
+.ring-mid::after, .ring-inner::after {
+  content:''; position:absolute; border-radius:50%;
+  top:-5px; left:50%; transform:translateX(-50%);
+}
+.ring-mid::after   { width:10px; height:10px; background:var(--gold);   box-shadow:0 0 10px var(--gold),  0 0 4px var(--gold); }
+.ring-inner::after { width: 8px; height: 8px; background:var(--silver); box-shadow:0 0  8px var(--silver),0 0 3px var(--silver); }
+
+.orrery-center {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  text-align:center; z-index:2;
+}
+.orrery-symbol { font-size:1.8rem; color:var(--gold); line-height:1; }
+
+.orrery-caption {
+  text-align:center; font-family:'Cinzel',serif; font-size:.6rem;
+  letter-spacing:.15em; color:var(--muted); margin-top:.7rem;
+  text-transform:uppercase;
+}
+
+@keyframes pulse-glow { 0%,100%{box-shadow:0 0 8px var(--gold-dim)} 50%{box-shadow:0 0 20px var(--gold)} }
+
+.clock-display {
+  font-family:'Courier Prime',monospace;
+  font-size:clamp(1rem,3vw,1.3rem);
+  color:var(--star); letter-spacing:.1em;
+  text-align:center; margin:1rem 0;
+}
+.clock-display span { color:var(--gold); }
+.clock-label { font-family:'Cinzel',serif; font-size:.65rem; letter-spacing:.3em; color:var(--muted); text-transform:uppercase; }
+
+/* ── PANELS ──────────────────────────────────────────────────── */
+.panel {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:4px; padding:1.5rem; margin:1.5rem 0;
+}
+.panel-gold { border-color:var(--gold-dim); background:linear-gradient(135deg,var(--panel),#1a1420); }
+.panel-code {
+  background:#060612; border:1px solid var(--border);
+  border-radius:4px; padding:1.5rem; margin:1.5rem 0;
+  font-family:'Courier Prime',monospace; font-size:.85rem;
+  line-height:1.6; overflow-x:auto;
+  white-space:pre-wrap; word-break:break-word;
+}
+.panel-code .c { color:var(--muted); font-style:italic; }
+.panel-code .k { color:var(--gold); }
+.panel-code .s { color:var(--silver); }
+.panel-code .n { color:var(--star); }
+.panel-code .v { color:var(--green); }
+.panel-code .t { color:var(--ophiuchus); }
+
+/* ── TIMELINE ────────────────────────────────────────────────── */
+.timeline { position:relative; padding-left:2rem; }
+.timeline::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:1px; background:linear-gradient(to bottom,transparent,var(--gold-dim),var(--gold),var(--gold-dim),transparent);
+}
+.tl-event { position:relative; margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
+.tl-event:last-child { border-bottom:none; }
+.tl-dot {
+  position:absolute; left:-2.4rem; top:.3rem;
+  width:12px; height:12px; border-radius:50%;
+  border:2px solid var(--gold); background:var(--void);
+}
+.tl-dot.red    { border-color:var(--red); }
+.tl-dot.blue   { border-color:var(--accent); }
+.tl-dot.green  { border-color:var(--green); }
+.tl-dot.purple { border-color:var(--ophiuchus); }
+.tl-date  { font-family:'Cinzel',serif; font-size:.8rem; letter-spacing:.15em; color:var(--gold); text-transform:uppercase; }
+.tl-title { font-family:'Cinzel',serif; font-size:1rem; color:var(--star); margin:.3rem 0; }
+.tl-body  { font-size:.95rem; color:var(--text); }
+.tl-calc  {
+  font-family:'Courier Prime',monospace; font-size:.8rem;
+  background:#060612; border-left:2px solid var(--gold-dim);
+  padding:.5rem 1rem; margin:.5rem 0; color:var(--silver);
+  white-space:pre-wrap;
+}
+
+/* ── UNIT HIERARCHY ──────────────────────────────────────────── */
+.unit-ladder { display:flex; flex-direction:column; gap:.4rem; }
+.unit-row {
+  display:flex; align-items:center; gap:1rem;
+  padding:.6rem 1rem; border:1px solid var(--border);
+  border-radius:3px; background:var(--panel);
+  transition:border-color .2s, background .2s;
+  cursor:default;
+}
+.unit-row:hover { border-color:var(--gold-dim); background:var(--surface); }
+.unit-name     { font-family:'Cinzel',serif; font-size:.9rem; color:var(--gold); width:90px; flex-shrink:0; }
+.unit-replaces { font-size:.8rem; color:var(--muted); width:90px; flex-shrink:0; font-style:italic; }
+.unit-count    { font-family:'Courier Prime',monospace; font-size:.8rem; color:var(--silver); width:160px; flex-shrink:0; }
+.unit-si       { font-family:'Courier Prime',monospace; font-size:.8rem; color:var(--text); flex:1; }
+.unit-row.highlight { border-color:var(--gold); background:linear-gradient(135deg,#1a1420,var(--panel)); }
+
+/* ── ZODIAC WHEEL ────────────────────────────────────────────── */
+.zodiac-wrapper { display:flex; justify-content:center; align-items:flex-start; gap:2rem; flex-wrap:wrap; }
+#zodiac-canvas { display:block; }
+
+.month-legend { flex:1; min-width:260px; }
+.legend-row {
+  display:flex; align-items:flex-start; gap:.8rem; padding:.4rem 0;
+  border-bottom:1px solid #1a1a2a; font-size:.85rem;
+}
+.legend-row:last-child { border-bottom:none; }
+.legend-num    { font-family:'Cinzel',serif; font-size:.7rem; color:var(--gold); width:20px; flex-shrink:0; padding-top:.15rem; }
+.legend-swatch { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:.3rem; }
+.legend-name   { font-family:'Courier Prime',monospace; color:var(--star); width:70px; flex-shrink:0; font-size:.8rem; }
+.legend-const  { color:var(--silver); flex:1; }
+.legend-days   { font-family:'Courier Prime',monospace; color:var(--muted); font-size:.75rem; padding-top:.1rem; }
+.legend-note   { color:var(--ophiuchus); font-size:.75rem; font-style:italic; }
+
+/* ── NAMING TABLE ────────────────────────────────────────────── */
+.name-table { width:100%; border-collapse:collapse; font-size:.9rem; }
+.name-table th {
+  font-family:'Cinzel',serif; font-size:.7rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--gold); padding:.7rem .8rem;
+  border-bottom:1px solid var(--gold-dim); text-align:left;
+}
+.name-table td { padding:.55rem .8rem; border-bottom:1px solid var(--border); vertical-align:top; }
+.name-table tr:last-child td { border-bottom:none; }
+.name-table tr:hover td { background:var(--surface); }
+.nm { font-family:'Courier Prime',monospace; color:var(--star); font-weight:700; }
+.nx { font-family:'Courier Prime',monospace; color:var(--muted); font-size:.8rem; }
+.ns { color:var(--silver); font-size:.85rem; }
+.sacred { color:var(--ophiuchus); }
+
+/* ── CONVERTER ───────────────────────────────────────────────── */
+.converter-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+@media(max-width:600px){ .converter-grid { grid-template-columns:1fr; } }
+
+.conv-panel {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:4px; padding:1.5rem;
+}
+.conv-panel.aeron-side { border-color:var(--gold-dim); }
+.conv-panel.si-side    { border-color:var(--accent); }
+
+.conv-title {
+  font-family:'Cinzel',serif; font-size:.75rem; letter-spacing:.25em;
+  text-transform:uppercase; margin-bottom:1rem;
+}
+.conv-title.aeron { color:var(--gold); }
+.conv-title.si    { color:var(--accent); }
+
+.field-row { margin-bottom:.8rem; }
+.field-row label {
+  display:block; font-family:'Cinzel',serif; font-size:.65rem;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:.3rem;
+}
+.field-row input, .field-row select {
+  width:100%; padding:.5rem .7rem;
+  background:#060612; border:1px solid var(--border);
+  border-radius:3px; color:var(--star);
+  font-family:'Courier Prime',monospace; font-size:.9rem;
+  outline:none; transition:border-color .2s;
+}
+.field-row input:focus, .field-row select:focus { border-color:var(--gold-dim); }
+
+.conv-result {
+  margin-top:1rem; padding:1rem;
+  background:#060612; border:1px solid var(--border);
+  border-radius:3px; font-family:'Courier Prime',monospace;
+  font-size:.85rem; line-height:1.8; min-height:80px;
+  color:var(--silver);
+  white-space:pre-wrap; word-break:break-word;
+}
+.conv-result .highlight { color:var(--gold); }
+.conv-result .dim { color:var(--muted); }
+
+.btn {
+  display:inline-block; padding:.6rem 1.5rem; margin:.5rem .3rem 0 0;
+  font-family:'Cinzel',serif; font-size:.7rem; letter-spacing:.2em;
+  text-transform:uppercase; cursor:pointer; border-radius:3px;
+  transition:all .2s; border:1px solid;
+}
+.btn-gold { background:transparent; border-color:var(--gold-dim); color:var(--gold); }
+.btn-gold:hover { background:var(--gold-dim); color:var(--void); }
+.btn-blue { background:transparent; border-color:var(--accent); color:var(--accent); }
+.btn-blue:hover { background:var(--accent); color:var(--void); }
+
+/* ── EPOCH BOX ───────────────────────────────────────────────── */
+.epoch-box {
+  border:1px solid var(--gold); background:linear-gradient(135deg,#0f0a20,var(--panel));
+  border-radius:4px; padding:2rem; text-align:center; margin:2rem 0;
+}
+.epoch-main { font-family:'Cinzel Decorative',serif; font-size:clamp(1rem,2.5vw,1.5rem); color:var(--gold); margin-bottom:.5rem; }
+.epoch-sub  { font-family:'Courier Prime',monospace; font-size:.85rem; color:var(--silver); margin:.3rem 0; }
+.epoch-note { font-size:.85rem; color:var(--muted); font-style:italic; margin-top:.8rem; }
+
+/* ── TABS ────────────────────────────────────────────────────── */
+.tabs { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:1.5rem; }
+.tab {
+  padding:.6rem 1.2rem; font-family:'Cinzel',serif; font-size:.7rem;
+  letter-spacing:.2em; text-transform:uppercase; cursor:pointer;
+  border-bottom:2px solid transparent; color:var(--muted);
+  transition:all .2s; margin-bottom:-1px;
+}
+.tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.tab:hover:not(.active) { color:var(--silver); }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+/* ── SCROLLBAR ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--void); }
+::-webkit-scrollbar-thumb { background:var(--gold-dim); border-radius:3px; }
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background:rgba(5,5,15,.92); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border); padding:.6rem 2rem;
+  display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
+}
+.nav-title { font-family:'Cinzel',serif; font-size:.75rem; letter-spacing:.2em; color:var(--gold); white-space:nowrap; }
+.nav-links  { display:flex; gap:1rem; flex-wrap:wrap; }
+.nav-links a {
+  font-family:'Cinzel',serif; font-size:.65rem; letter-spacing:.15em;
+  text-transform:uppercase; color:var(--muted); text-decoration:none;
+  transition:color .2s;
+}
+.nav-links a:hover { color:var(--gold); }
+
+#hero { padding-top:80px; }
+
+/* ── CALLOUT ─────────────────────────────────────────────────── */
+.callout {
+  border-left:3px solid var(--gold); padding:.8rem 1.2rem;
+  background:linear-gradient(90deg,#1a1420,transparent);
+  margin:1.5rem 0; font-style:italic; color:var(--silver);
+}
+.callout.blue   { border-left-color:var(--accent); }
+.callout.purple { border-left-color:var(--ophiuchus); }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-title">Æron Time</span>
+  <div class="nav-links">
+    <a href="#philosophy">Philosophy</a>
+    <a href="#history">History</a>
+    <a href="#epoch">Epoch</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#zodiac">Zodiac</a>
+    <a href="#names">Names</a>
+    <a href="#converter">Converter</a>
+    <a href="#calibration">Calibration</a>
+    <a href="#contributors">Sources</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ HERO -->
+<section id="hero">
+  <div class="page" style="width:100%">
+    <div class="hero-subtitle">A Complete Timekeeping System</div>
+    <h1>Æron Time</h1>
+    <h1 style="font-size:clamp(1rem,3vw,1.8rem); margin-top:.5rem; color:var(--silver)">The Hydrogen Calendar</h1>
+    <div class="authorship">Research &amp; Guidelines: Charl Steynberg · Developed with Anthropic Claude Sonnet AI</div>
+
+    <div class="orrery">
+      <div class="orrery-ring ring-outer"></div>
+      <div class="orrery-ring ring-mid"   id="ring-si"></div>
+      <div class="orrery-ring ring-inner" id="ring-ae"></div>
+      <div class="orrery-ring ring-core"></div>
+      <div class="orrery-center">
+        <div class="orrery-symbol">Æ</div>
+      </div>
+    </div>
+    <div class="orrery-caption">Middle: SI seconds &nbsp;·&nbsp; Inner: Æron beats &nbsp;·&nbsp; Divergence is real</div>
+
+    <div class="clock-label" style="margin-top:1.5rem">Current Æron Time</div>
+    <div class="clock-display" id="aeron-hero-clock">Loading…</div>
+    <div class="clock-label" style="margin-top:.3rem">Current SI / UTC Time</div>
+    <div class="clock-display" id="si-hero-clock" style="color:var(--silver); font-size:1rem">Loading…</div>
+
+    <div class="small-rule" style="margin:2rem auto;"></div>
+    <p style="max-width:560px; margin:0 auto; text-align:center; color:var(--muted); font-style:italic; font-size:1rem">
+      A calendar locked to hydrogen oscillations and anchored to the birth of Yeshua of Nazareth.
+      Zero drift. Nothing to correct — the beat is re-derived live from orbital mechanics, every time. The cosmos, counting itself.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ PHILOSOPHY -->
+<section id="philosophy">
+  <div class="page">
+    <h2>The Philosophy</h2>
+    <div class="rule"></div>
+
+    <p>The hydrogen atom oscillates at <em>1,420,405,751.7667 Hz</em> — a frequency not chosen by humans, not defined by convention, but fundamental to the structure of matter itself. It is the same everywhere in the observable universe. It does not drift. It does not age. It is the universe's own heartbeat.</p>
+
+    <p>The tropical year — the time for Earth to complete one orbit relative to the sun — is, as of today, <em id="live-ty-days">365.2421896698 days</em>. This is not a fixed convention: it changes slowly across centuries as Earth's orbit and axis precess, and the Æron system recomputes it from the Laskar (1986) secular model every time it needs the answer — never from a stored figure.</p>
+
+    <p>These two numbers, one quantum and one celestial, are both expressions of the same underlying physical laws. The Æron system defines the <strong>beat</strong> as the exact fraction of hydrogen oscillations that makes 31,449,600 beats equal one tropical year. The beat is derived — it is the tropical year divided by the calendar count, expressed in hydrogen oscillations. Today it is exactly <strong id="live-osc-per-beat">1,425,253,059</strong> oscillations: close to a resting human heartbeat, but not by coincidence — the number emerges from the cosmos itself, recalculated fresh each time the date is asked for.</p>
+
+    <div class="callout">
+      The universe is already keeping perfect time. The Æron system is simply the first to read it correctly.
+    </div>
+
+    <p>Hermes Trismegistus — the thrice-greatest, master of astronomy, geometry, and the measurement of time — understood that the cosmos is not chaotic but deeply ordered, that the same ratios and harmonics appear at every scale. The Æron system is built in that spirit: from first principles, without convention, with no corrections ever required — because the beat length is never stored, only computed, fresh, from the live orbital model, at the moment it's needed.</p>
+
+    <div class="panel panel-gold">
+      <h4>The Central Claim</h4>
+      <p style="margin:0; font-size:.95rem">The Æron calendar year is defined as exactly <strong>364 days × 86,400 beats</strong>. The calendar is not trying to track the sun — it <em>is</em> a count. It cannot drift because there is nothing to drift against. The hydrogen oscillation is the reference. The beat is its integer unit. The calendar is the count. These three things are one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ HISTORY -->
+<section id="history">
+  <div class="page">
+    <h2>Historical Reconstruction</h2>
+    <p style="color:var(--muted); font-style:italic; margin-bottom:2rem">The road to Beat Zero — tracking the days that were lost, moved, or deliberately discarded.</p>
+    <div class="rule"></div>
+
+    <div class="timeline">
+
+      <div class="tl-event">
+        <div class="tl-dot"></div>
+        <div class="tl-date">~3000 BC – Babylon</div>
+        <div class="tl-title">The 12-Month Convention</div>
+        <div class="tl-body">Babylonian astronomers codified a 12-constellation zodiac and 12-month calendar despite knowing that the sun passes through <strong>13</strong> constellations along the ecliptic. Ophiuchus, the Serpent Bearer, was deliberately omitted to fit the lunar month count. This suppression persisted for 3,000 years.</div>
+      </div>
+
+      <div class="tl-event">
+        <div class="tl-dot blue"></div>
+        <div class="tl-date">45 BC — Julius Caesar</div>
+        <div class="tl-title">The Julian Calendar Reform</div>
+        <div class="tl-body">Caesar replaced the Roman lunar calendar with a solar calendar of 365.25 days, adding a leap day every 4 years. The actual tropical year is 365.2421896698 days — so the Julian calendar accumulated <strong>+1 day every ~128 years</strong>.</div>
+        <div class="tl-calc">Error rate: 365.25 − 365.2421896698 = 0.0078103302 days/year
+By AD 325 (Council of Nicaea): ~3.3 days accumulated
+By AD 1582 (Gregorian reform): ~12.7 days accumulated</div>
+      </div>
+
+      <div class="tl-event">
+        <div class="tl-dot red"></div>
+        <div class="tl-date">AD 525 — Dionysius Exiguus</div>
+        <div class="tl-title">The Epoch Miscalculation</div>
+        <div class="tl-body">A Scythian monk invented the AD dating system to replace the Diocletian era. Based on available records, he placed Yeshua's birth in what we now call <strong>1 BC / 1 AD</strong>. Modern scholarship — cross-referencing Herod's death with Chinese comet records and the census of Quirinius — places the actual birth at approximately <strong>5 BC</strong>, making the AD calendar approximately 4–6 years late from its own stated epoch.</div>
+        <div class="tl-calc">Herod the Great died: 4 BC (Josephus, confirmed by lunar eclipse records)
+Yeshua born "before Herod's death": therefore before 4 BC
+Best astronomical convergence (C. Humphreys, QJRAS 1991):
+  → April 13–27, 5 BC (Julian proleptic)
+  → Associated with a comet in Chinese Han Shu records, spring 5 BC</div>
+      </div>
+
+      <div class="tl-event">
+        <div class="tl-dot red"></div>
+        <div class="tl-date">4 October 1582 — Pope Gregory XIII</div>
+        <div class="tl-title">Ten Days Vanish</div>
+        <div class="tl-body">The accumulated Julian error since the Council of Nicaea (AD 325) had reached ~10 days. Pope Gregory XIII issued a papal bull: the day after Thursday, 4 October 1582 (Julian) became Friday, <strong>15 October 1582</strong> (Gregorian). Ten days were struck from history. Nations adopted the reform at different times — Britain not until 1752, Russia not until 1918.</div>
+        <div class="tl-calc">Days dropped: 10  (covering drift from AD 325 to AD 1582)
+Note: drift from 45 BC to AD 325 (~12.7 days total) was NOT corrected —
+only the post-Nicaean portion was addressed.</div>
+      </div>
+
+      <div class="tl-event">
+        <div class="tl-dot green"></div>
+        <div class="tl-date">5 BC — The Æron Epoch</div>
+        <div class="tl-title">Beat Zero: Bethlehem, Midnight</div>
+        <div class="tl-body">The Æron calendar anchors its epoch to the best historically and astronomically verifiable moment associated with Yeshua's birth: <strong>local midnight in Bethlehem on 17 April, 5 BC (Julian proleptic)</strong>. This is consistent with Luke's account (the shepherds were in the fields at night), the Chinese comet records, and Herod's death chronology.</div>
+        <div class="tl-calc">Bethlehem: 31.7054°N, 35.2024°E
+UTC offset: +35.2024/15 hours = +2h 20m 48.6s ahead of UTC
+Beat Zero in UTC: 16 April 5 BC (Julian), 21:39:11.462 UTC
+Julian Day Number of Beat Zero: 1,719,703.402216…</div>
+      </div>
+
+      <div class="tl-event">
+        <div class="tl-dot purple"></div>
+        <div class="tl-date">1930 — IAU Boundary Definition</div>
+        <div class="tl-title">Ophiuchus Officially Restored</div>
+        <div class="tl-body">The International Astronomical Union fixed official constellation boundaries. Under these boundaries, the sun passes through <strong>13 ecliptic constellations</strong> including Ophiuchus (Nov 30 – Dec 18, ~18 days). The Æron calendar formally recognises all 13 as the basis for its month names — restoring what the Babylonians suppressed.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ EPOCH -->
+<section id="epoch">
+  <div class="page">
+    <h2>The Epoch</h2>
+    <div class="rule"></div>
+
+    <p>Every time system requires an anchor — a moment from which the count begins. The Æron epoch is chosen not by convention but by historical and astronomical convergence.</p>
+
+    <div class="epoch-box">
+      <div class="epoch-main">Æron Beat Zero</div>
+      <div class="epoch-sub">17 April, 5 BC (Julian Proleptic Calendar)</div>
+      <div class="epoch-sub">Local midnight · Bethlehem, Judaea · 31.7054°N 35.2024°E</div>
+      <div class="epoch-sub" style="color:var(--muted)">= 16 April 5 BC · 21:39:11.462 UTC</div>
+      <div class="epoch-sub" style="color:var(--muted)">Julian Day Number: 1,719,703.402216…</div>
+      <div class="epoch-note">The night on which Yeshua of Nazareth (יֵשׁוּעַ, Yēšūaʿ) was born.<br>His name in Hebrew and Aramaic means <em>"Yahweh saves."</em></div>
+    </div>
+
+    <h3>On the Name</h3>
+    <p>The name <em>Jesus</em> is a transliteration chain: Aramaic <strong>Yeshua</strong> → Greek <strong>Iēsous</strong> → Latin <strong>Iesus</strong> → English <strong>Jesus</strong>. Each step introduced phonetic drift. The Æron system uses <strong>Yeshua</strong> — the actual name, in the language he spoke. In Hebrew and Aramaic texts and in the Gospel of Thomas, the name appears consistently as <em>Yēšūaʿ</em> (יֵשׁוּעַ), meaning "Yahweh saves" or "Yahweh is salvation."</p>
+
+    <h3>Why This Night</h3>
+    <p>The Luke account records shepherds in the fields when the angelic announcement came — indicating a night birth. The Chinese Han Shu records a comet visible in the spring of 5 BC. Herod the Great, who ordered the killing of infants under 2 years old, died in 4 BC per Josephus (confirmed by a lunar eclipse dated to March 13, 4 BC). The most precise astronomical analysis (Humphreys, QJRAS, 1991) places the birth between April 13–27, 5 BC. We anchor to April 17 as the central estimate, at local midnight.</p>
+
+    <div class="callout blue">
+      Dates before Beat Zero are negative — but fully calculable. The Æron system is bidirectional from epoch. Any historical event with a known Julian or Gregorian date can be expressed as a precise negative beat count.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════ ARCHITECTURE -->
+<section id="architecture">
+  <div class="page">
+    <h2>System Architecture</h2>
+    <div class="rule"></div>
+
+    <p>The Æron time system is a strict hierarchy of units, each an exact integer multiple of the one below. There are no exceptions, no corrections, no special cases.</p>
+
+    <div class="unit-ladder">
+      <div class="unit-row" style="border-color:var(--gold); opacity:.5">
+        <div class="unit-name">Pulse</div>
+        <div class="unit-replaces">~microsecond</div>
+        <div class="unit-count">1,000 H oscillations</div>
+        <div class="unit-si">≈ 704 nanoseconds</div>
+      </div>
+      <div class="unit-row highlight">
+        <div class="unit-name">Beat</div>
+        <div class="unit-replaces">second</div>
+        <div class="unit-count"><span id="live-osc-per-beat-2">1,425,253,059</span> H osc</div>
+        <div class="unit-si">≈ <span id="live-tbeat-si">1.003412622…</span> SI seconds (<span id="live-tbeat-drift">+3.41ms</span>) <em style="font-size:.75rem;color:var(--gold)">(base unit — derived live, today)</em></div>
+      </div>
+      <div class="unit-row">
+        <div class="unit-name">Span</div>
+        <div class="unit-replaces">hour</div>
+        <div class="unit-count">3,600 beats</div>
+        <div class="unit-si">≈ <span id="live-span-si">3,612.285 SI seconds (1 SI hr + 12.3 s)</span></div>
+      </div>
+      <div class="unit-row">
+        <div class="unit-name">Watch</div>
+        <div class="unit-replaces">quarter-day</div>
+        <div class="unit-count">21,600 beats</div>
+        <div class="unit-si">4 watches per Sol</div>
+      </div>
+      <div class="unit-row">
+        <div class="unit-name">Sol</div>
+        <div class="unit-replaces">day</div>
+        <div class="unit-count">86,400 beats</div>
+        <div class="unit-si">≈ <span id="live-sol-si">86,694.85 SI seconds (+4m 54.8s vs SI day)</span></div>
+      </div>
+      <div class="unit-row">
+        <div class="unit-name">Vara</div>
+        <div class="unit-replaces">week</div>
+        <div class="unit-count">7 Sols = 604,800 beats</div>
+        <div class="unit-si">4 Varas per month</div>
+      </div>
+      <div class="unit-row">
+        <div class="unit-name">Month</div>
+        <div class="unit-replaces">month</div>
+        <div class="unit-count">28 Sols = 2,419,200 beats</div>
+        <div class="unit-si">13 months per Cycle</div>
+      </div>
+      <div class="unit-row" style="border-color:var(--gold)">
+        <div class="unit-name">Cycle</div>
+        <div class="unit-replaces">year</div>
+        <div class="unit-count">364 Sols = 31,449,600 beats</div>
+        <div class="unit-si">Exact. Forever. No exceptions.</div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:2rem">
+      <h4>The Beat — Derived</h4>
+      <p style="margin:0;font-size:.95rem">
+        The beat is not an arbitrary integer. It is derived from the tropical year:<br><br>
+        <strong>H_PER_BEAT = round( H_HZ × TY_seconds(era) ÷ 364 ÷ 24 ÷ 60 ÷ 60 )</strong><br><br>
+        H_HZ = 1,420,405,751.7667 Hz (NIST — fixed, never changes).<br>
+        TY_seconds varies slowly per century (Laskar 1986 secular polynomial — the drift model itself).<br>
+        At J2000.0 (this system's reconciled anchor): <strong>1,425,253,059 oscillations/beat</strong> → T_BEAT_SI ≈ <strong>1.003412622 SI seconds</strong>.<br>
+        At 5 BC epoch: <strong>1,425,253,531 oscillations/beat</strong> (TY was longer then — precession means the beat itself was a fraction longer too).<br>
+        <strong>Today: <span id="live-beat-derived-today">1,425,253,059 oscillations/beat → T_BEAT_SI ≈ 1.003412622 SI seconds</span></strong> — computed live, on this page load, not copied from the line above.<br>
+        The ~3.4ms difference from 1 SI second is what synchronises the calendar to the cosmos — and it is recalculated, never assumed, every time.
+      </p>
+    </div>
+
+    <h3 style="margin-top:2rem">Timestamp Format</h3>
+    <div class="panel-code"><span class="c">// Æron timestamp — display format</span>
+<span class="n">YYYY</span>.<span class="n">MM</span>.<span class="n">DD</span> <span class="n">HH</span>:<span class="n">MM</span>:<span class="n">SS</span>
+
+<span class="c">// Where:</span>
+<span class="n">YYYY</span>   <span class="c">= Cycle number (positive CE era, negative pre-epoch)</span>
+<span class="n">MM</span>     <span class="c">= Month 01–13</span>
+<span class="n">DD</span>     <span class="c">= Sol 01–28</span>
+<span class="n">HH</span>     <span class="c">= Span 00–23  (3,600 beats each)</span>
+<span class="n">MM</span>     <span class="c">= Minute 00–59 (60 beats each)</span>
+<span class="n">SS</span>     <span class="c">= Second 00–59 (1 beat each)</span>
+
+<span class="c">// Example: today at noon</span>
+<span class="v">2031.01.10 12:00:00</span>
+
+<span class="c">// Raw beat form for full precision work:</span>
+<span class="v">2031.01.10:43200</span>    <span class="c">// BBBBB = beat within Sol (00000–86399)</span></div>
+
+    <h3>The Zero-Drift Guarantee</h3>
+    <p>The calendar year is defined as <em>exactly</em> 364 × 86,400 = 31,449,600 beats. This is not an approximation of the tropical year. It is a fixed count that runs independently of it. The beat is derived from the tropical year: 31,449,600 beats × T_BEAT_SI = exactly 1 tropical year. The calendar year <em>is</em> the tropical year, counted in beats. Seasons do not precess. The beat breathes with the cosmos — if the tropical year length shifts over geological time, T_BEAT_SI is updated from observation, and the calendar absorbs it without structural change. The calendar itself <strong>cannot accumulate error</strong>, because the beat is always defined relative to the actual tropical year.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ ZODIAC -->
+<section id="zodiac">
+  <div class="page">
+    <h2>The Zodiac Wheel</h2>
+    <p style="color:var(--muted); font-style:italic; margin-bottom:1.5rem">13 months · 13 constellations · Ophiuchus restored</p>
+    <div class="rule"></div>
+
+    <p>Each Æron month is named for the constellation most associated with that 28-sol period. The naming is an astronomical orientation, not a claim of exact solar residence — the sun spends irregular periods in each constellation (7 days in Scorpius, 45 days in Virgo). The month name anchors the period to its dominant celestial character.</p>
+
+    <div class="callout purple">
+      Ophmon (Month 9) formally restores Ophiuchus to the calendar — correcting the Babylonian omission of 3,000 years. The Serpent Bearer, healer of men, was always there. Now it is named.
+    </div>
+
+    <div class="zodiac-wrapper">
+      <canvas id="zodiac-canvas" width="340" height="340"></canvas>
+      <div class="month-legend" id="month-legend"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════ NAMES -->
+<section id="names">
+  <div class="page">
+    <h2>The Complete Naming System</h2>
+    <p style="color:var(--muted); font-style:italic; margin-bottom:1.5rem">All names exactly 6 letters · Roots from ancestral memory</p>
+    <div class="rule"></div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'tab-days')">Days</div>
+      <div class="tab" onclick="switchTab(this,'tab-weeks')">Weeks</div>
+      <div class="tab" onclick="switchTab(this,'tab-months')">Months</div>
+      <div class="tab" onclick="switchTab(this,'tab-units')">Units</div>
+    </div>
+
+    <div id="tab-days" class="tab-content active">
+      <p style="font-size:.9rem;color:var(--muted)">Pattern: <strong>[3-letter counting root] + sol</strong> (Latin/PIE: sun, light). Roots from Sanskrit number sequence — the oldest recoverable counting tradition. The seventh Sol breaks the pattern by sacred design.</p>
+      <table class="name-table">
+        <thead><tr><th>#</th><th>Name</th><th>Root</th><th>Tradition</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="nm">Ekasol</td><td class="nx">Eka+sol</td><td class="ns">Sanskrit</td><td><em>eka</em> = one. First light of the vara.</td></tr>
+          <tr><td>2</td><td class="nm">Dvisol</td><td class="nx">Dvi+sol</td><td class="ns">Sanskrit</td><td><em>dvi</em> = two. Lives in <em>dual, deux, zwei</em>.</td></tr>
+          <tr><td>3</td><td class="nm">Trisol</td><td class="nx">Tri+sol</td><td class="ns">Universal</td><td><em>tri</em> = three. Sanskrit, Greek, Latin, all agree.</td></tr>
+          <tr><td>4</td><td class="nm">Tursol</td><td class="nx">Tur+sol</td><td class="ns">Sanskrit/Latin</td><td>From <em>chatur / quattuor</em>. The fourth light.</td></tr>
+          <tr><td>5</td><td class="nm">Pansol</td><td class="nx">Pan+sol</td><td class="ns">Sanskrit/Greek</td><td><em>panca / pente</em>. Root of <em>pentagon</em>.</td></tr>
+          <tr><td>6</td><td class="nm">Sessol</td><td class="nx">Ses+sol</td><td class="ns">Latin/Sanskrit</td><td><em>sex / shat</em>. Six. Phonetically clean.</td></tr>
+          <tr><td>7</td><td class="nm sacred">Shabat</td><td class="nx">—</td><td class="ns">Hebrew</td><td><em>Shabbat</em> — to cease, to rest. Sacred. Stands apart.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="tab-weeks" class="tab-content">
+      <p style="font-size:.9rem;color:var(--muted)">Pattern: <strong>[3-letter counting root] + var</strong> (Sanskrit <em>vara</em>: arc, turn, a period of time). Same number roots as days — the system speaks one counting language throughout.</p>
+      <table class="name-table">
+        <thead><tr><th>#</th><th>Name</th><th>Root</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="nm">Ekavar</td><td class="nx">Eka+var</td><td>First arc of the month</td></tr>
+          <tr><td>2</td><td class="nm">Dvivar</td><td class="nx">Dvi+var</td><td>Second arc</td></tr>
+          <tr><td>3</td><td class="nm">Trivar</td><td class="nx">Tri+var</td><td>Third arc</td></tr>
+          <tr><td>4</td><td class="nm">Turvar</td><td class="nx">Tur+var</td><td>Fourth arc — completes the month</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.85rem;color:var(--muted);margin-top:1rem">Position within month: Sol 1–7 = Ekavar, Sol 8–14 = Dvivar, Sol 15–21 = Trivar, Sol 22–28 = Turvar.</p>
+    </div>
+
+    <div id="tab-months" class="tab-content">
+      <p style="font-size:.9rem;color:var(--muted)">Pattern: <strong>[3-letter constellation abbreviation] + mon</strong> (Latin <em>mensis</em>: month). The month is named for the constellation most associated with its 28-sol period. Cycle Year begins at the vernal equinox — Arimon is Month 1.</p>
+      <table class="name-table">
+        <thead><tr><th>#</th><th>Name</th><th>Constellation</th><th>Sun approx.</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="nm">Arimon</td><td class="ns">Aries</td><td class="nx">Apr 18 – May 14</td><td>Vernal equinox. Cycle begins.</td></tr>
+          <tr><td>2</td><td class="nm">Taumon</td><td class="ns">Taurus</td><td class="nx">May 14 – Jun 21</td><td>Rising warmth.</td></tr>
+          <tr><td>3</td><td class="nm">Gemmon</td><td class="ns">Gemini</td><td class="nx">Jun 21 – Jul 20</td><td>Summer solstice falls here.</td></tr>
+          <tr><td>4</td><td class="nm">Canmon</td><td class="ns">Cancer</td><td class="nx">Jul 20 – Aug 10</td><td>21 days actual — brief.</td></tr>
+          <tr><td>5</td><td class="nm">Leomon</td><td class="ns">Leo</td><td class="nx">Aug 10 – Sep 16</td><td>Height of summer.</td></tr>
+          <tr><td>6</td><td class="nm">Virmon</td><td class="ns">Virgo</td><td class="nx">Sep 16 – Oct 31</td><td>45 days actual — the longest.</td></tr>
+          <tr><td>7</td><td class="nm">Libmon</td><td class="ns">Libra</td><td class="nx">Oct 31 – Nov 23</td><td>Autumn equinox. Balance.</td></tr>
+          <tr><td>8</td><td class="nm">Scomon</td><td class="ns">Scorpius</td><td class="nx">Nov 23 – Nov 30</td><td>Only 7 days actual.</td></tr>
+          <tr><td>9</td><td class="nm sacred">Ophmon</td><td class="ns" style="color:var(--ophiuchus)">Ophiuchus</td><td class="nx">Nov 30 – Dec 18</td><td style="color:var(--ophiuchus)">Restored. 3,000 years suppressed.</td></tr>
+          <tr><td>10</td><td class="nm">Sagmon</td><td class="ns">Sagittarius</td><td class="nx">Dec 18 – Jan 19</td><td>Into winter.</td></tr>
+          <tr><td>11</td><td class="nm">Capmon</td><td class="ns">Capricornus</td><td class="nx">Jan 19 – Feb 16</td><td>Winter solstice territory.</td></tr>
+          <tr><td>12</td><td class="nm">Aqumon</td><td class="ns">Aquarius</td><td class="nx">Feb 16 – Mar 11</td><td>The water bearer.</td></tr>
+          <tr><td>13</td><td class="nm">Pismon</td><td class="ns">Pisces</td><td class="nx">Mar 11 – Apr 18</td><td>Final month. 38 days actual.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="tab-units" class="tab-content">
+      <table class="name-table">
+        <thead><tr><th>Æron Name</th><th>Replaces</th><th>Exact Count</th><th>SI Equivalent</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Pulse</td><td class="ns">microsecond</td><td class="nx">1,000 H oscillations</td><td>≈ 704 nanoseconds</td></tr>
+          <tr><td class="nm">Beat</td><td class="ns">second</td><td class="nx"><span id="live-osc-per-beat-3">~1,425,253,059</span> H osc<br><span style="font-size:.75rem;color:var(--muted)">derived live, today</span></td><td><span id="live-tbeat-si-2">≈ 1.003412622 s</span><br><span style="font-size:.75rem;color:var(--muted)">vs SI: <span id="live-tbeat-drift-2">+3.41ms</span></span></td></tr>
+          <tr><td class="nm">Span</td><td class="ns">hour</td><td class="nx">3,600 beats</td><td><span id="live-span-si-2">≈ 3,612 SI seconds</span></td></tr>
+          <tr><td class="nm">Watch</td><td class="ns">quarter-day</td><td class="nx">21,600 beats</td><td>4 per Sol</td></tr>
+          <tr><td class="nm">Sol</td><td class="ns">day</td><td class="nx">86,400 beats</td><td><span id="live-sol-si-2">≈ 86,694 SI seconds</span></td></tr>
+          <tr><td class="nm">Vara</td><td class="ns">week</td><td class="nx">604,800 beats</td><td>4 Varas per Month</td></tr>
+          <tr><td class="nm">Month</td><td class="ns">month</td><td class="nx">2,419,200 beats</td><td>13 per Cycle</td></tr>
+          <tr><td class="nm">Cycle</td><td class="ns">year</td><td class="nx">31,449,600 beats</td><td>Exact. No exceptions.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ CONVERTER -->
+<section id="converter">
+  <div class="page">
+    <h2>Live Converter</h2>
+    <div class="rule"></div>
+
+    <div class="converter-grid">
+      <div class="conv-panel aeron-side">
+        <div class="conv-title aeron">Æron → Legacy UTC</div>
+        <div class="field-row">
+          <label>Cycle (Year)</label>
+          <input type="number" id="ae-year" value="2031">
+        </div>
+        <div class="field-row">
+          <label>Month (1–13)</label>
+          <select id="ae-month">
+            <option value="1">01 — Arimon (Aries)</option>
+            <option value="2">02 — Taumon (Taurus)</option>
+            <option value="3">03 — Gemmon (Gemini)</option>
+            <option value="4">04 — Canmon (Cancer)</option>
+            <option value="5">05 — Leomon (Leo)</option>
+            <option value="6">06 — Virmon (Virgo)</option>
+            <option value="7">07 — Libmon (Libra)</option>
+            <option value="8">08 — Scomon (Scorpius)</option>
+            <option value="9">09 — Ophmon (Ophiuchus)</option>
+            <option value="10">10 — Sagmon (Sagittarius)</option>
+            <option value="11">11 — Capmon (Capricornus)</option>
+            <option value="12">12 — Aqumon (Aquarius)</option>
+            <option value="13">13 — Pismon (Pisces)</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <label>Sol (Day 1–28)</label>
+          <input type="number" id="ae-day" value="1" min="1" max="28">
+        </div>
+        <div class="field-row">
+          <label>Beat (0–86399)</label>
+          <input type="number" id="ae-beat" value="43200" min="0" max="86399">
+        </div>
+        <button class="btn btn-gold" onclick="convertAeronToSI()">Convert →</button>
+        <div class="conv-result" id="aeron-result"><span class="dim">Enter values and press Convert</span></div>
+      </div>
+
+      <div class="conv-panel si-side">
+        <div class="conv-title si">Legacy UTC → Æron</div>
+        <div class="field-row">
+          <label>Astronomical Year</label>
+          <input type="number" id="si-year" value="2026" oninput="updateEraHint()">
+          <div class="epoch-note" id="era-hint" style="margin-top:.3rem;text-align:left">No year 0 — 0 = 1 BC, −1 = 2 BC, −4 = 5 BC.</div>
+        </div>
+        <div class="field-row">
+          <label>Month (1–12)</label>
+          <input type="number" id="si-month" value="4" min="1" max="12">
+        </div>
+        <div class="field-row">
+          <label>Day</label>
+          <input type="number" id="si-day" value="21" min="1" max="31">
+        </div>
+        <div class="field-row">
+          <label>Hour UTC (0–23)</label>
+          <input type="number" id="si-hour" value="12" min="0" max="23">
+        </div>
+        <div class="field-row">
+          <label>Minute</label>
+          <input type="number" id="si-minute" value="0" min="0" max="59">
+        </div>
+        <div class="field-row">
+          <label>Second</label>
+          <input type="number" id="si-second" value="0" min="0" max="59" step="0.001">
+        </div>
+        <button class="btn btn-blue" onclick="convertSIToAeron()">Convert →</button>
+        <div class="conv-result" id="si-result"><span class="dim">Enter values and press Convert</span></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:2rem">
+      <h4>Notable Dates</h4>
+      <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.5rem">
+        <button class="btn btn-gold" onclick="loadAeronPreset(1,1,1,0)">Beat Zero</button>
+        <button class="btn btn-gold" onclick="loadPreset(1,12,25,12,0,0)">25 Dec 1 CE</button>
+        <button class="btn btn-gold" onclick="loadPresetNow()">Now</button>
+        <button class="btn btn-gold" onclick="loadPreset(1582,10,4,12,0,0)">Last Julian Sol</button>
+        <button class="btn btn-gold" onclick="loadPreset(1582,10,15,12,0,0)">First Gregorian Sol</button>
+        <button class="btn btn-gold" onclick="loadPreset(2000,1,1,0,0,0)">Y2K</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ CALIBRATION -->
+<section id="calibration">
+  <div class="page">
+    <h2>Calibration &amp; Drift</h2>
+    <div class="rule"></div>
+
+    <p>The beat is derived from the tropical year — which itself is not constant. It shortens by approximately <em>0.5 seconds per century</em> due to planetary perturbations, precession rate changes, and the slow tidal deceleration of Earth's rotation. Two thousand years ago the tropical year was roughly 10 seconds longer than today.</p>
+
+    <p>The Æron system handles this through a calibration layer. The calendar structure — 13 months, 4 varas, 7 sols, 86,400 beats — never changes. The beat duration is recomputed for any requested era using the IAU-standard Laskar polynomial. The result is checked against published authoritative equinox tables. When the residual exceeds 1 beat, a new calibration epoch entry is warranted.</p>
+
+    <div class="callout">
+      The calendar is rigid. The beat breathes. The cosmos is the clock.
+    </div>
+
+    <h3>Current Calibration Epochs</h3>
+    <div style="overflow-x:auto">
+      <table class="name-table">
+        <thead>
+          <tr>
+            <th>Label</th>
+            <th>JC from J2000</th>
+            <th>TY (days)</th>
+            <th>H_PER_BEAT</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody id="cal-table-body">
+          <tr><td colspan="5" style="color:var(--muted);font-style:italic">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="epoch-note" style="margin-top:1rem;text-align:left">
+      <strong>Why "J2000.0" and "Today" don't quite agree, and why that's not an error:</strong>
+      Laskar's (1986) own polynomial constant (365.24219878 d) and the independently-published
+      IAU/VSOP-87 standard mean tropical year at J2000.0 (365.2421896698 d) disagree with each
+      other by about <strong>0.79 SI seconds</strong> — two credible sources, same instant,
+      genuinely different published figures. That gap is real measurement/method disagreement
+      between ephemerides, not rounding error, and per this system's own standard — no
+      millisecond is negligible — it is not quietly absorbed into either source. Instead, this
+      system's live calculations are anchored to the <strong>midpoint of the two, 365.2421942249
+      days</strong>, splitting the disagreement rather than picking a side. The original Laskar
+      and IAU figures are kept untouched as independent cross-check rows above (alongside
+      Moisson 1999) precisely so the spread stays visible. "Today" is computed from that
+      reconciled value carried forward through the secular polynomial's drift terms — it will
+      never exactly equal the J2000.0 row, even at jc≈0, because it's anchored ~0.39s away from
+      each original source by design.
+    </div>
+
+    <h3 style="margin-top:2rem">Drift Sources — Named &amp; Quantified</h3>
+    <div class="panel">
+      <table class="name-table">
+        <thead><tr><th>Source</th><th>Rate</th><th>Scale</th><th>Handled By</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="ns">Tropical year shortening</td>
+            <td class="nx">~0.5 s/century</td>
+            <td>Centuries</td>
+            <td>Laskar polynomial in <code>tropicalYear(jc)</code></td>
+          </tr>
+          <tr>
+            <td class="ns">Planetary perturbations (Jupiter, Saturn)</td>
+            <td class="nx">~20 min residual at ±6000 yr</td>
+            <td>Millennia</td>
+            <td>Polynomial valid ±10,000 yr; beyond that, La93 solution</td>
+          </tr>
+          <tr>
+            <td class="ns">Axial precession (26,000 yr cycle)</td>
+            <td class="nx">Shifts equinox point slowly</td>
+            <td>Millennia</td>
+            <td>Absorbed in tropical year definition (mean equinox)</td>
+          </tr>
+          <tr>
+            <td class="ns">Tidal braking (Earth–Moon)</td>
+            <td class="nx">~1.4 ms/century lengthening of solar day</td>
+            <td>Geological</td>
+            <td>ΔT correction; relevant beyond ±5,000 yr from J2000</td>
+          </tr>
+          <tr>
+            <td class="ns">Observed residual (ΔT)</td>
+            <td class="nx">~65 s at J2000; growing</td>
+            <td>Centuries</td>
+            <td>Calibration epoch records</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ CONTRIBUTORS -->
+<section id="contributors">
+  <div class="page">
+    <h2>Contributors &amp; Sources</h2>
+    <p style="color:var(--muted); font-style:italic; margin-bottom:1.5rem">
+      Every calculation in this system stands on the shoulders of those listed here.
+      AI participation in scientific research deserves named acknowledgement — not as a tool used, but as a collaborator.
+    </p>
+    <div class="rule"></div>
+
+    <h3>Research &amp; Design</h3>
+    <div class="panel panel-gold" style="margin-bottom:1.5rem">
+      <table class="name-table">
+        <thead><tr><th>Contributor</th><th>Role</th><th>Period</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="nm">Charl Steynberg</td>
+            <td>Research, guidelines, system architecture, philosophical framework, naming system, epoch selection, all structural decisions</td>
+            <td class="nx">2025–2026, Cape Town, South Africa</td>
+          </tr>
+          <tr>
+            <td class="nm" style="color:var(--accent)">Anthropic Claude Sonnet</td>
+            <td>AI development partner — mathematical derivation, algorithm implementation, historical research, source verification, HTML document development. Model: claude-sonnet-4-6</td>
+            <td class="nx">2025–2026 · Anthropic PBC, San Francisco</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Astronomical Sources</h3>
+    <div class="panel">
+      <table class="name-table">
+        <thead><tr><th>Source</th><th>Contribution</th><th>Reference</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="nm">Laskar, J.</td>
+            <td>Tropical year polynomial — secular terms of classical planetary theories. The authoritative long-range formula for tropical year variation.</td>
+            <td class="nx">A&amp;A 157, 59–70 (1986)</td>
+          </tr>
+          <tr>
+            <td class="nm">Meeus, Jean</td>
+            <td>Astronomical Algorithms — the primary reference for JD conversion, calendar arithmetic, tropical year tabulation, and the JD↔calendar algorithm used throughout.</td>
+            <td class="nx">Astronomical Algorithms, 2nd ed. (1998)<br>Willmann-Bell, ISBN 0-943396-61-1</td>
+          </tr>
+          <tr>
+            <td class="nm">Capitaine et al.</td>
+            <td>IAU 2000 precession quantities — P03 model. Confirms Laskar polynomial and provides modern IAU standard for precession calculations.</td>
+            <td class="nx">A&amp;A 412, 567–586 (2003)</td>
+          </tr>
+          <tr>
+            <td class="nm">Moisson, X.</td>
+            <td>Independent tropical year value at J2000.0 (365.242190419 days) from DE405 ephemeris fit — used as cross-check calibration epoch.</td>
+            <td class="nx">A&amp;A 341, 318–327 (1999)</td>
+          </tr>
+          <tr>
+            <td class="nm">Bretagnon &amp; Francou</td>
+            <td>VSOP-87 planetary ephemeris — the numerical foundation for Laskar's analytical theory and Meeus's algorithms.</td>
+            <td class="nx">A&amp;A 202, 309–315 (1988)</td>
+          </tr>
+          <tr>
+            <td class="nm">IAU / NIST</td>
+            <td>Hydrogen hyperfine frequency: 1,420,405,751.7667 Hz. The unchanging base of the entire system.</td>
+            <td class="nx">NIST CODATA 2018</td>
+          </tr>
+          <tr>
+            <td class="nm">IAU (1930)</td>
+            <td>Official constellation boundary definitions — 13 ecliptic constellations confirmed, Ophiuchus formally included. Basis for Æron month naming.</td>
+            <td class="nx">Delporte, E. (1930), IAU constellation atlas</td>
+          </tr>
+          <tr>
+            <td class="nm">USNO / IERS</td>
+            <td>Ongoing authoritative equinox tables and Earth orientation data — the external reference for Æron drift checks.</td>
+            <td class="nx">aa.usno.navy.mil/data/EarthSeasons</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:2rem">Historical Witnesses</h3>
+    <p style="font-size:.9rem; color:var(--muted)">The people and records that make the epoch calculable.</p>
+    <div class="panel">
+      <table class="name-table">
+        <thead><tr><th>Witness</th><th>Evidence</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="nm">Han Shu astronomers</td>
+            <td>Chinese imperial court astronomical records documenting a comet visible in spring 5 BC — the most precise independent confirmation of the birth year.</td>
+            <td class="nx">Han Shu (Book of Han), c. AD 82</td>
+          </tr>
+          <tr>
+            <td class="nm">Humphreys, C.J.</td>
+            <td>Cross-referenced the Chinese comet record with Herod's death date and Gospel accounts to place the birth in April 13–27, 5 BC.</td>
+            <td class="nx">QJRAS 32, 389–407 (1991)</td>
+          </tr>
+          <tr>
+            <td class="nm">Josephus, Flavius</td>
+            <td>Records Herod the Great's death after a lunar eclipse, establishing the latest possible birth date. The eclipse is identified as 13 March 4 BC.</td>
+            <td class="nx">Antiquities of the Jews, Book 17 (c. AD 93)</td>
+          </tr>
+          <tr>
+            <td class="nm">Luke (Gospel author)</td>
+            <td>Shepherds in the fields at night during the angelic announcement — establishes the birth as a night event, grounding the midnight epoch anchor.</td>
+            <td class="nx">Luke 2:8, c. AD 80–85</td>
+          </tr>
+          <tr>
+            <td class="nm">Gospel of Thomas</td>
+            <td>Uses the Aramaic name יֵשׁוּעַ (Yēšūaʿ) — confirming the original form of the name used in the epoch designation.</td>
+            <td class="nx">Nag Hammadi Codex II, c. 340 AD</td>
+          </tr>
+          <tr>
+            <td class="nm">Babylonian astronomers</td>
+            <td>Codified the 12-constellation zodiac ~3000 BC, deliberately omitting Ophiuchus to fit a lunar calendar. The suppression this system corrects.</td>
+            <td class="nx">MUL.APIN compendium, c. 1000 BC</td>
+          </tr>
+          <tr>
+            <td class="nm">Dionysius Exiguus</td>
+            <td>Invented AD dating in 525 AD. Placed the birth ~4–6 years late. His error is what makes the epoch 5 BC in proleptic Julian, not year 1.</td>
+            <td class="nx">Cyclus Paschalis (525 AD)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section style="padding:3rem 0; text-align:center; border-top:1px solid var(--border)">
+  <div class="page">
+    <div style="font-family:'Cinzel',serif; font-size:.75rem; letter-spacing:.3em; color:var(--muted);">ÆRON TIME SYSTEM</div>
+    <div style="font-size:.85rem; color:var(--muted); margin-top:.5rem; font-style:italic">
+      Research &amp; Guidelines: Charl Steynberg · Developed with Anthropic Claude Sonnet AI
+    </div>
+    <div style="font-size:.8rem; color:var(--gold-dim); margin-top:.5rem; font-family:'Courier Prime',monospace">
+      1 beat ≈ <span id="live-osc-per-beat-4">1,425,253,059</span> H oscillations (derived live, today) · 364 sols · 13 months · 0 drift
+    </div>
+  </div>
+</section>
+
+<script>
+'use strict';
+
+// ════════════════════════════════════════════════════════════════
+//  ÆRON TIME SYSTEM
+//  Research & Guidelines: Charl Steynberg
+//  AI Development Partner: Anthropic Claude Sonnet (claude-sonnet-4-6)
+// ════════════════════════════════════════════════════════════════
+
+// ── PHYSICAL CONSTANT ─────────────────────────────────────────
+// Source: NIST CODATA 2018  https://physics.nist.gov/cgi-bin/cuu/Value?nuhydhf
+// Verified: Essen & Parry (1955), Hellwig et al. (1970)
+const H_HZ = 1_420_405_751.7667;  // hydrogen hyperfine frequency, Hz
+
+// ── CALENDAR STRUCTURE — FIXED FOREVER ────────────────────────
+// The hierarchy is explicit and multiplicative — each unit is an exact
+// integer multiple of the one below. No unit's count is ever derived
+// from SI seconds; SI seconds are a translation, not a basis.
+const SOLS_PER_CYCLE   = 364;                                       // 13 months × 28 sols
+const SPANS_PER_SOL    = 24;
+const MINUTES_PER_SPAN = 60;
+const BEATS_PER_MINUTE = 60;
+const BEATS_PER_SPAN   = MINUTES_PER_SPAN * BEATS_PER_MINUTE;       // 3,600
+const BEATS_PER_SOL    = SPANS_PER_SOL    * BEATS_PER_SPAN;         // 86,400
+const BEATS_PER_CYCLE  = SOLS_PER_CYCLE   * BEATS_PER_SOL;          // 31,449,600
+
+// ── EPOCH ─────────────────────────────────────────────────────
+// Local midnight, Bethlehem, 17 Apr 5 BC (Julian proleptic)
+// Bethlehem: 31.7054°N, 35.2024°E → UTC+2h 20m 48.576s
+// = 16 Apr 5 BC Julian, 21:39:11.462 UTC
+const EPOCH_JD = 1_719_703.402216;
+const J2000_JD = 2_451_545.0;
+
+// Julian century offset from J2000.0 — used ONLY as the index into the
+// tropical-year polynomial below, and as the bridge to the legacy
+// Gregorian/Julian calendar in the Converter. Not part of Æron-native math.
+function jcFromJD(jd) { return (jd - J2000_JD) / 36_525; }
+
+// ── TROPICAL YEAR — THE DRIFT MODEL ───────────────────────────
+// Laskar (1986) secular polynomial, as given in Meeus (1998) Ch.27.
+// jc = Julian centuries (36,525 days) from J2000.0. Returns SI seconds.
+// Valid: ±10,000 years from J2000.0 (Meeus, p.178).
+//
+// CONSTANT TERM — RECONCILED, NOT THE RAW LASKAR FIGURE:
+// Laskar's own polynomial constant (365.24219878 d) and the IAU/Meeus
+// published standard mean tropical year at J2000.0 (365.2421896698 d,
+// VSOP-87 derived) disagree by ~0.787 SI seconds — a real, measurable
+// gap between two independently-published values for the same instant,
+// not rounding noise. Per the principle that no millisecond is
+// negligible, this is NOT silently absorbed: the constant term used
+// below is the midpoint of the two, 365.2421942249 days, and every
+// calculation in this system — beat length, calendar conversion, all
+// of it — is built on that reconciled value. The original Laskar and
+// IAU figures are preserved unmodified as independent cross-check rows
+// in the Calibration Epochs table (see CALIBRATION_EPOCHS below) so
+// the ~0.79s spread between sources stays visible, not hidden.
+//
+// What the three non-constant terms absorb, century over century:
+//   • axial precession (the equinox point regressing along the ecliptic)
+//   • secular change in orbital eccentricity and longitude of perihelion
+//   • cumulative planetary perturbation (Jupiter/Venus/Saturn forcing)
+// all derived by Laskar from a numerical integration of the full solar
+// system (the same VSOP-87 foundation Meeus's algorithms use).
+// Because hPerBeat() below calls this fresh, at the caller's jc, every
+// single time — never caching a beat length across eras — the system
+// has nothing to drift away from: the answer for "now" is computed
+// from "now"'s orbital mechanics, every time the document is opened.
+//
+// NOT modeled here (because they don't apply): Earth's rotational
+// slowdown (tidal LOD increase, ~+1.7ms/century) is irrelevant — the
+// tropical year is an orbital period, defined in dynamical/ephemeris
+// time, not tied to Earth's spin. It only matters for the legacy
+// UTC/leap-second bridge in the translation layer, never for the beat.
+function tropicalYear(jc) {
+  return (365.2421942249
+    - 6.15359e-6  * jc
+    - 7.29e-10    * jc * jc
+    + 2.64e-10    * jc * jc * jc) * 86400;
+}
+
+// ── BEAT DERIVATION — pure Æron hierarchy, no SI math below this line ──
+// H oscillations in one full tropical year (the SI handshake, once).
+function oscPerYear(jc)   { return H_HZ * tropicalYear(jc); }
+// From here: nested division through the unit ladder.
+// year → sol (÷364) → span (÷24) → minute (÷60) → beat (÷60)
+function oscPerSol(jc)    { return oscPerYear(jc)   / SOLS_PER_CYCLE; }
+function oscPerSpan(jc)   { return oscPerSol(jc)    / SPANS_PER_SOL; }
+function oscPerMinute(jc) { return oscPerSpan(jc)   / MINUTES_PER_SPAN; }
+function oscPerBeat(jc)   { return oscPerMinute(jc) / BEATS_PER_MINUTE; }
+// hPerBeat is the only place an oscillation count is rounded to a whole
+// number — a beat must be a whole number of hydrogen oscillations.
+function hPerBeat(jc)     { return Math.round(oscPerBeat(jc)); }
+
+// ── TRANSLATION LAYER — SI seconds, for legacy comparison only ────────
+// Nothing in the Æron-native math above depends on these. They exist
+// so a beat/span/sol can be compared against an SI clock, and so the
+// Converter can bridge to the Gregorian/Julian calendar (JD math is
+// inherently SI-second-based — that's "unless necessary" territory).
+function tBeatSI(jc)    { return hPerBeat(jc) / H_HZ; }  // SI seconds per beat
+function tBeatAtJD(jd)  { return tBeatSI(jcFromJD(jd)); }
+
+// ── CALIBRATION EPOCHS ────────────────────────────────────────
+// ty_si_obs: published/observed tropical year in SI seconds.
+// If absent, computed from Laskar polynomial.
+//
+// Unix-epoch → JD, used only to find TODAY_JC below (no SITime
+// dependency needed here — that class is defined later in the file).
+function jdFromDate(d) { return d.getTime() / 86_400_000 + 2_440_587.5; }
+// Recomputed fresh on every page load — this is "today", not a stored value.
+const TODAY_JC = jcFromJD(jdFromDate(new Date()));
+
+const CALIBRATION_EPOCHS = [
+  {
+    label:      'Beat Zero (5 BC)',
+    jc:         jcFromJD(EPOCH_JD),
+    source:     'Reconciled polynomial (see note below) evaluated at 5 BC epoch',
+  },
+  {
+    label:      'J2000.0 (IAU)',
+    jc:         0,
+    ty_si_obs:  365.2421896698 * 86400,
+    source:     'Meeus (1998) Ch.27; IAU standard; VSOP-87 ephemeris — unmodified original',
+  },
+  {
+    label:      'Moisson (1999)',
+    jc:         0,
+    ty_si_obs:  365.242190419 * 86400,
+    source:     'Moisson (1999) A&A 341, DE405 ephemeris — unmodified original',
+  },
+  {
+    label:      'Reconciled @ J2000.0',
+    jc:         0,
+    source:     'Midpoint of Laskar (1986) own constant and IAU figure — this system\u2019s actual anchor',
+  },
+  {
+    label:      'Today',
+    jc:         TODAY_JC,
+    source:     'Live — reconciled polynomial evaluated at this exact moment, on load',
+  },
+].map(e => {
+  const ty = e.ty_si_obs || tropicalYear(e.jc);
+  return { ...e, ty_si: ty, h_per_beat: Math.round(H_HZ * ty / BEATS_PER_CYCLE) };
+});
+
+// Current-era beat length — derived live from today's date, not a stored
+// snapshot. Used as the orrery's animation rate and as the toJD() seed.
+const T_BEAT_NOW = hPerBeat(TODAY_JC) / H_HZ;
+
+// ── NAMES ─────────────────────────────────────────────────────
+const MONTH_NAMES = ['','Arimon','Taumon','Gemmon','Canmon','Leomon','Virmon',
+                     'Libmon','Scomon','Ophmon','Sagmon','Capmon','Aqumon','Pismon'];
+const MONTH_CONST = ['','Aries','Taurus','Gemini','Cancer','Leo','Virgo',
+                     'Libra','Scorpius','Ophiuchus','Sagittarius','Capricornus','Aquarius','Pisces'];
+const DAY_NAMES   = ['','Ekasol','Dvisol','Trisol','Tursol','Pansol','Sessol','Shabat'];
+const WEEK_NAMES  = ['','Ekavar','Dvivar','Trivar','Turvar'];
+
+// ══════════════════════════════════════════════════════════════
+//  AeronTime
+// ══════════════════════════════════════════════════════════════
+class AeronTime {
+  constructor(year, month, day, beat) {
+    this.year  = Math.floor(year);
+    this.month = Math.floor(month);
+    this.day   = Math.floor(day);
+    this.beat  = Math.floor(beat);
+  }
+
+  // ── Factory: from total beat count since epoch ──────────────
+  static fromBeats(totalBeats) {
+    const b     = Math.floor(totalBeats);
+    const beat  = ((b % BEATS_PER_SOL) + BEATS_PER_SOL) % BEATS_PER_SOL;
+    const days  = Math.floor(b / BEATS_PER_SOL);
+    const year  = Math.floor(days / SOLS_PER_CYCLE) + 1;
+    const rem   = ((days % SOLS_PER_CYCLE) + SOLS_PER_CYCLE) % SOLS_PER_CYCLE;
+    const month = Math.floor(rem / 28) + 1;
+    const day   = (rem % 28) + 1;
+    return new AeronTime(year, month, day, beat);
+  }
+
+  // ── Factory: from Julian Day Number ─────────────────────────
+  // Uses era-appropriate T_BEAT_SI derived from Laskar polynomial.
+  static fromJD(jd) {
+    const beats = (jd - EPOCH_JD) * 86400 / tBeatAtJD(jd);
+    return AeronTime.fromBeats(beats);
+  }
+
+  // ── Factory: current moment ─────────────────────────────────
+  static now() {
+    return AeronTime.fromJD(Date.now() / 86_400_000 + 2_440_587.5);
+  }
+
+  // ── Total beats since epoch ─────────────────────────────────
+  toBeats() {
+    return ((this.year  - 1) * SOLS_PER_CYCLE +
+            (this.month - 1) * 28 +
+            (this.day   - 1)) * BEATS_PER_SOL + this.beat;
+  }
+
+  // ── Convert back to Julian Day Number ───────────────────────
+  // Two-pass: approximate JD → era-correct T_BEAT → final JD
+  toJD() {
+    const beats    = this.toBeats();
+    const approxJD = EPOCH_JD + beats * T_BEAT_NOW / 86400;
+    return EPOCH_JD + beats * tBeatAtJD(approxJD) / 86400;
+  }
+
+  // ── Time-of-day getters (HH:MM:SS within Sol) ───────────────
+  get span()   { return Math.floor(this.beat / 3600); }           // 0–23
+  get minute() { return Math.floor((this.beat % 3600) / 60); }    // 0–59
+  get second() { return this.beat % 60; }                         // 0–59
+
+  // ── Calendar getters ────────────────────────────────────────
+  get vara()      { return Math.floor((this.day - 1) / 7) + 1; }
+  get dayOfWk()   { return ((this.day - 1) % 7) + 1; }
+  get watch()     { return Math.floor(this.beat / 21_600) + 1; }
+  get monthName() { return MONTH_NAMES[this.month] || ''; }
+  get dayName()   { return DAY_NAMES[this.dayOfWk]  || ''; }
+  get varaName()  { return WEEK_NAMES[this.vara]     || ''; }
+
+  // ── Display ─────────────────────────────────────────────────
+  toString() {
+    const p2 = n => String(Math.abs(Math.floor(n))).padStart(2, '0');
+    const p4 = n => String(Math.abs(Math.floor(n))).padStart(4, '0');
+    const sign = this.year < 0 ? '-' : '';
+    return `${sign}${p4(this.year)}.${p2(this.month)}.${p2(this.day)} ${p2(this.span)}:${p2(this.minute)}:${p2(this.second)}`;
+  }
+
+  toHuman() {
+    return `Cycle ${this.year}, ${this.monthName}, ${this.varaName}, ${this.dayName}`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SITime
+// ══════════════════════════════════════════════════════════════
+class SITime {
+  constructor(year, month, day, hour = 0, minute = 0, second = 0) {
+    this.year   = year;
+    this.month  = month;
+    this.day    = day;
+    this.hour   = hour;
+    this.minute = minute;
+    this.second = second;
+    this.cal    = SITime._inferCal(year, month, day);
+  }
+
+  // ── Calendar boundary (Meeus 1998, Algorithm 7.1) ───────────
+  // JDN < 2,299,161 → Julian proleptic (up to 4 Oct 1582)
+  // JDN ≥ 2,299,161 → Gregorian        (from 15 Oct 1582)
+  static _inferCal(y, m, d) {
+    if (y < 1582) return 'Julian';
+    if (y === 1582 && m < 10) return 'Julian';
+    if (y === 1582 && m === 10 && d < 15) return 'Julian';
+    return 'Gregorian';
+  }
+
+  // ── Factory: from Julian Day Number ─────────────────────────
+  static fromJD(jd) {
+    const jdh = jd + 0.5;
+    const Z   = Math.floor(jdh);
+    const F   = jdh - Z;
+    let A, cal;
+    if (Z < 2_299_161) {
+      A = Z; cal = 'Julian';
+    } else {
+      const g = Math.floor((Z - 1_867_216.25) / 36_524.25);
+      A = Z + 1 + g - Math.floor(g / 4);
+      cal = 'Gregorian';
+    }
+    const B     = A + 1524;
+    const C     = Math.floor((B - 122.1) / 365.25);
+    const D     = Math.floor(365.25 * C);
+    const E     = Math.floor((B - D) / 30.6001);
+    const day   = B - D - Math.floor(30.6001 * E);
+    const month = E < 14 ? E - 1 : E - 13;
+    const year  = month > 2 ? C - 4716 : C - 4715;
+    const secs  = F * 86400;
+    const si    = new SITime(year, month, day,
+                    Math.floor(secs / 3600),
+                    Math.floor((secs % 3600) / 60),
+                    secs % 60);
+    si.cal = cal;
+    return si;
+  }
+
+  static now() {
+    const d = new Date();
+    return new SITime(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(),
+                      d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds());
+  }
+
+  // ── Convert to Julian Day Number ─────────────────────────────
+  toJD() {
+    const { year: Y, month: M, day: D } = this;
+    const A   = Math.floor((14 - M) / 12);
+    const y   = Y + 4800 - A;
+    const m   = M + 12 * A - 3;
+    let jdn;
+    if (this.cal === 'Julian') {
+      jdn = D + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - 32083;
+    } else {
+      jdn = D + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4)
+          - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+    }
+    return jdn + (this.hour * 3600 + this.minute * 60 + this.second) / 86400 - 0.5;
+  }
+
+  toAeron() { return AeronTime.fromJD(this.toJD()); }
+
+  get displayYear() { return this.year <= 0 ? `${1 - this.year} BC` : `${this.year} CE`; }
+
+  toString() {
+    const MON = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const p   = n => String(Math.floor(Math.abs(n))).padStart(2, '0');
+    return `${String(this.day).padStart(2,'0')} ${MON[this.month]} ${this.displayYear}`
+         + ` (${this.cal}) ${p(this.hour)}:${p(this.minute)}:${p(this.second)} UTC`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  UI — CONVERTER
+// ══════════════════════════════════════════════════════════════
+// Safe numeric field readers — parseInt(x)||fallback is a trap: 0 is a
+// legitimate value here (Aeron year 0, astronomical year 0 = 1 BC), and
+// 0 is falsy in JS, so `|| fallback` silently overwrote real zeros.
+// Only fall back when the field is genuinely empty/non-numeric (NaN).
+function intVal(id, fallback) {
+  const v = parseInt(document.getElementById(id).value, 10);
+  return Number.isNaN(v) ? fallback : v;
+}
+function floatVal(id, fallback) {
+  const v = parseFloat(document.getElementById(id).value);
+  return Number.isNaN(v) ? fallback : v;
+}
+
+function convertAeronToSI() {
+  const y  = intVal('ae-year',  1);
+  const mo = intVal('ae-month', 1);
+  const d  = intVal('ae-day',   1);
+  const b  = intVal('ae-beat',  0);
+  const ae = new AeronTime(y, mo, d, b);
+  const si = SITime.fromJD(ae.toJD());
+  const jd = ae.toJD();
+  const jc = jcFromJD(jd);
+  document.getElementById('aeron-result').innerHTML =
+    `<span class="highlight">${ae.toString()}</span>\n`
+  + `<span class="dim">${ae.toHuman()}</span>\n\n`
+  + `\u2193 Legacy UTC\n`
+  + `<span class="highlight">${si.toString()}</span>\n\n`
+  + `<span class="dim">Total beats from epoch: ${ae.toBeats().toLocaleString()}\n`
+  + `JD: ${jd.toFixed(6)}\n`
+  + `T_BEAT_SI (era): ${tBeatSI(jc).toFixed(9)} s</span>`;
+}
+
+function convertSIToAeron() {
+  const y  = intVal('si-year',   2026);
+  const mo = intVal('si-month',  1);
+  const d  = intVal('si-day',    1);
+  const h  = intVal('si-hour',   0);
+  const mi = intVal('si-minute', 0);
+  const s  = floatVal('si-second', 0);
+  const si = new SITime(y, mo, d, h, mi, s);
+  const ae = si.toAeron();
+  const jd = si.toJD();
+  const jc = jcFromJD(jd);
+  const ty = tropicalYear(jc);
+  document.getElementById('si-result').innerHTML =
+    `<span class="highlight">${si.toString()}</span>\n`
+  + `\u2193 Æron Time\n`
+  + `<span class="highlight">${ae.toString()}</span>\n`
+  + `<span class="dim">${ae.toHuman()}</span>\n\n`
+  + `<span class="dim">JC from J2000: ${jc.toFixed(4)}\n`
+  + `TY at era: ${(ty / 86400).toFixed(10)} days\n`
+  + `H/beat (era): ${hPerBeat(jc).toLocaleString()} oscillations\n`
+  + `T_BEAT_SI: ${tBeatSI(jc).toFixed(9)} s</span>`;
+}
+
+// Presets: populate SI side and convert both directions
+function loadPreset(y, mo, d, h, mi, s = 0) {
+  document.getElementById('si-year').value   = y;
+  document.getElementById('si-month').value  = mo;
+  document.getElementById('si-day').value    = d;
+  document.getElementById('si-hour').value   = h;
+  document.getElementById('si-minute').value = mi;
+  document.getElementById('si-second').value = s;
+  updateEraHint();
+  convertSIToAeron();
+  // Mirror result into Æron→SI panel
+  const si = new SITime(y, mo, d, h, mi, s);
+  const ae = si.toAeron();
+  document.getElementById('ae-year').value  = ae.year;
+  document.getElementById('ae-month').value = ae.month;
+  document.getElementById('ae-day').value   = ae.day;
+  document.getElementById('ae-beat').value  = ae.beat;
+  convertAeronToSI();
+}
+
+function loadPresetNow() {
+  const d = new Date();
+  loadPreset(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(),
+             d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds());
+}
+
+// Æron-side presets: for points DEFINED in Æron terms (above all, Beat
+// Zero itself), populate the Æron fields directly and derive Legacy UTC
+// from them — rather than typing an approximate calendar date/time and
+// hoping it round-trips to exactly the right beat. Beat Zero IS Cycle 1,
+// Arimon, Day 1, Beat 0 by definition; going the other way risks a
+// sub-beat floating-point gap landing on the wrong side of Math.floor()
+// and displaying as the *previous* cycle's last beat (visually a full
+// year off, even though the real gap is a few tens of milliseconds).
+function loadAeronPreset(y, mo, d, b) {
+  document.getElementById('ae-year').value  = y;
+  document.getElementById('ae-month').value = mo;
+  document.getElementById('ae-day').value   = d;
+  document.getElementById('ae-beat').value  = b;
+  convertAeronToSI();
+  const ae = new AeronTime(y, mo, d, b);
+  const si = SITime.fromJD(ae.toJD());
+  document.getElementById('si-year').value   = si.year;
+  document.getElementById('si-month').value  = si.month;
+  document.getElementById('si-day').value    = si.day;
+  document.getElementById('si-hour').value   = si.hour;
+  document.getElementById('si-minute').value = si.minute;
+  document.getElementById('si-second').value = si.second.toFixed(9);
+  updateEraHint();
+  convertSIToAeron();
+}
+
+// Live "no year 0" reminder next to the year field — astronomical year
+// -4 reads as 5 BC (1 - year), not a naive sign flip to "4 BC".
+function updateEraHint() {
+  const y = intVal('si-year', 0);
+  const hint = document.getElementById('era-hint');
+  if (!hint) return;
+  hint.textContent = y <= 0
+    ? `No year 0 — astronomical year ${y} = ${1 - y} BC.`
+    : `No year 0 — 0 = 1 BC, −1 = 2 BC, −4 = 5 BC.`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  UI — LIVE CLOCK
+// ══════════════════════════════════════════════════════════════
+function updateClocks() {
+  const ae = AeronTime.now();
+  const si = SITime.now();
+  document.getElementById('aeron-hero-clock').innerHTML =
+    `<span>Æ ${ae.toString()}</span>  `
+  + `<span style="color:var(--silver);font-size:.8em">${ae.monthName} · ${ae.dayName}</span>`;
+  document.getElementById('si-hero-clock').textContent = si.toString();
+}
+setInterval(updateClocks, 1000);
+updateClocks();
+
+// ══════════════════════════════════════════════════════════════
+//  UI — ORRERY ANIMATION
+//  Middle ring (gold dot) tracks SI seconds.
+//  Inner ring  (silver dot) tracks Æron beats.
+//  One revolution = 30 SI seconds / 30 Æron beats.
+//  Because T_BEAT > 1 SI second, the inner ring runs slightly
+//  slower. After a few minutes the divergence is clearly visible.
+// ══════════════════════════════════════════════════════════════
+const _orrStart = Date.now();
+const _ringSI   = document.getElementById('ring-si');
+const _ringAE   = document.getElementById('ring-ae');
+
+function animateOrrery() {
+  const elapsedSI    = (Date.now() - _orrStart) / 1000;     // SI seconds elapsed
+  const elapsedBeats = elapsedSI / T_BEAT_NOW;              // Æron beats elapsed
+  const degSI = (elapsedSI    / 30) * 360;
+  const degAE = (elapsedBeats / 30) * 360;
+  _ringSI.style.transform = `translate(-50%,-50%) rotate(${degSI}deg)`;
+  _ringAE.style.transform = `translate(-50%,-50%) rotate(${degAE}deg)`;
+  requestAnimationFrame(animateOrrery);
+}
+animateOrrery();
+
+// ══════════════════════════════════════════════════════════════
+//  UI — TABS
+// ══════════════════════════════════════════════════════════════
+function switchTab(el, id) {
+  const section = el.closest('section') || document;
+  section.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  section.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  (section.querySelector('#' + id) || document.getElementById(id)).classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  UI — ZODIAC WHEEL
+// ══════════════════════════════════════════════════════════════
+// Segment sizes reflect real sky constellation periods (not 28-sol months).
+// This is correct: it shows the actual proportions of each constellation's
+// solar residence time, giving the wheel astronomical meaning.
+const MONTHS_DATA = [
+  { name:'Arimon', const:'Aries',       days:26, col:'#cc7744' },
+  { name:'Taumon', const:'Taurus',      days:38, col:'#44aa66' },
+  { name:'Gemmon', const:'Gemini',      days:29, col:'#ccaa33' },
+  { name:'Canmon', const:'Cancer',      days:21, col:'#4499cc' },
+  { name:'Leomon', const:'Leo',         days:37, col:'#cc5533' },
+  { name:'Virmon', const:'Virgo',       days:45, col:'#88aa55' },
+  { name:'Libmon', const:'Libra',       days:23, col:'#5577cc' },
+  { name:'Scomon', const:'Scorpius',    days:7,  col:'#993333' },
+  { name:'Ophmon', const:'Ophiuchus',   days:18, col:'#7744cc' },
+  { name:'Sagmon', const:'Sagittarius', days:32, col:'#cc8833' },
+  { name:'Capmon', const:'Capricornus', days:28, col:'#4477aa' },
+  { name:'Aqumon', const:'Aquarius',    days:23, col:'#33aacc' },
+  { name:'Pismon', const:'Pisces',      days:38, col:'#7799cc' },
+];
+
+function drawZodiac() {
+  const canvas = document.getElementById('zodiac-canvas');
+  const ctx    = canvas.getContext('2d');
+  const cx = 170, cy = 170, r = 150, ri = 90;
+  const total   = MONTHS_DATA.reduce((a, m) => a + m.days, 0);
+  const nowMonth = AeronTime.now().month - 1;
+  ctx.clearRect(0, 0, 340, 340);
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = '#05050f'; ctx.fill();
+  let angle = -Math.PI / 2;
+  MONTHS_DATA.forEach((m, i) => {
+    const sweep = (m.days / total) * Math.PI * 2;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, angle, angle + sweep); ctx.closePath();
+    ctx.fillStyle = m.col + (i === nowMonth ? 'cc' : '44'); ctx.fill();
+    ctx.strokeStyle = '#0a0a1a'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, r, angle, angle + sweep);
+    ctx.strokeStyle = i === nowMonth ? m.col : m.col + '88';
+    ctx.lineWidth   = i === nowMonth ? 3 : 1; ctx.stroke();
+    const mid = angle + sweep / 2, lr = (r + ri) / 2;
+    ctx.save();
+    ctx.translate(cx + lr * Math.cos(mid), cy + lr * Math.sin(mid));
+    ctx.rotate(mid + Math.PI / 2);
+    ctx.font      = (i === nowMonth ? 'bold ' : '') + '8px Courier Prime, monospace';
+    ctx.fillStyle = i === nowMonth ? '#ffffff' : m.col;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(m.name, 0, 0); ctx.restore();
+    angle += sweep;
+  });
+  ctx.beginPath(); ctx.arc(cx, cy, ri, 0, Math.PI * 2);
+  ctx.fillStyle = '#0a0a18'; ctx.fill();
+  ctx.strokeStyle = '#2a2a4a'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.font = 'bold 28px Cinzel Decorative, serif';
+  ctx.fillStyle = '#c8a84b'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('Æ', cx, cy);
+}
+
+function buildLegend() {
+  const el      = document.getElementById('month-legend');
+  const nowMo   = AeronTime.now().month - 1;
+  el.innerHTML  = MONTHS_DATA.map((m, i) => {
+    const isOph = m.const === 'Ophiuchus';
+    const isCur = i === nowMo;
+    return `<div class="legend-row" style="${isCur ? 'background:#1a1428' : ''}">
+      <span class="legend-num">${String(i + 1).padStart(2, '0')}</span>
+      <span class="legend-swatch" style="background:${m.col}"></span>
+      <span class="legend-name">${m.name}</span>
+      <span class="legend-const" style="${isOph ? 'color:var(--ophiuchus)' : ''}">${m.const}</span>
+      <span class="legend-days">${m.days}d</span>
+      ${isOph ? '<span class="legend-note">★ Restored</span>' : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── Init ──────────────────────────────────────────────────────
+// ── LIVE NUMBERS ──────────────────────────────────────────────
+// Fills every prose/table figure in the document from TODAY_JC.
+// Nothing here is a stored constant — it's all computed at the
+// moment the page loads, from the same drift model the calendar
+// itself uses. Re-open the document tomorrow and these recompute.
+function renderLiveNumbers() {
+  const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+
+  const hpb     = hPerBeat(TODAY_JC);                  // oscillations/beat, today
+  const tBeat   = hpb / H_HZ;                           // SI seconds/beat, today
+  const driftMs = (tBeat - 1) * 1000;
+  const spanSI  = tBeat * BEATS_PER_SPAN;
+  const solSI   = tBeat * BEATS_PER_SOL;
+  const tyDays  = tropicalYear(TODAY_JC) / 86400;
+
+  const hpbStr   = hpb.toLocaleString();
+  const tBeatStr = tBeat.toFixed(9) + '…';
+  const driftStr = (driftMs >= 0 ? '+' : '') + driftMs.toFixed(2) + 'ms';
+
+  const spanExtra = spanSI - 3600;
+  const spanStr   = `${spanSI.toFixed(3)} SI seconds (1 SI hr + ${spanExtra.toFixed(1)} s)`;
+
+  const solExtra  = solSI - 86400;
+  const solMin    = Math.floor(solExtra / 60);
+  const solSec    = (solExtra - solMin * 60).toFixed(1);
+  const solStr    = `${solSI.toFixed(2)} SI seconds (+${solMin}m ${solSec}s vs SI day)`;
+
+  // Philosophy section
+  set('live-ty-days',      tyDays.toFixed(10) + ' days');
+  set('live-osc-per-beat', hpbStr);
+
+  // Architecture unit-ladder
+  set('live-osc-per-beat-2', hpbStr);
+  set('live-tbeat-si',        tBeatStr);
+  set('live-tbeat-drift',     driftStr);
+  set('live-span-si',         spanStr);
+  set('live-sol-si',          solStr);
+
+  // Beat — Derived panel
+  set('live-beat-derived-today', `${hpbStr} oscillations/beat → T_BEAT_SI ≈ ${tBeat.toFixed(9)} SI seconds`);
+
+  // Names → Units tab
+  set('live-osc-per-beat-3', '~' + hpbStr);
+  set('live-tbeat-si-2',     '≈ ' + tBeat.toFixed(9) + ' s');
+  set('live-tbeat-drift-2',  driftStr);
+  set('live-span-si-2',      '≈ ' + spanSI.toFixed(0) + ' SI seconds');
+  set('live-sol-si-2',       '≈ ' + solSI.toFixed(0) + ' SI seconds');
+
+  // Footer ticker
+  set('live-osc-per-beat-4', hpbStr);
+}
+
+window.addEventListener('load', () => {
+  drawZodiac();
+  buildLegend();
+  renderLiveNumbers();
+  // Default converter: today
+  const now = new Date();
+  document.getElementById('si-year').value   = now.getUTCFullYear();
+  document.getElementById('si-month').value  = now.getUTCMonth() + 1;
+  document.getElementById('si-day').value    = now.getUTCDate();
+  document.getElementById('si-hour').value   = now.getUTCHours();
+  document.getElementById('si-minute').value = now.getUTCMinutes();
+  document.getElementById('si-second').value = now.getUTCSeconds();
+  updateEraHint();
+  convertSIToAeron();
+  // Calibration table
+  const tbody = document.getElementById('cal-table-body');
+  if (tbody) {
+    tbody.innerHTML = CALIBRATION_EPOCHS.map(e => `
+      <tr>
+        <td class="nm">${e.label}</td>
+        <td class="nx">${e.jc.toFixed(4)}</td>
+        <td class="nx">${(e.ty_si / 86400).toFixed(10)}</td>
+        <td class="nm">${e.h_per_beat.toLocaleString()}</td>
+        <td class="ns" style="font-size:.75rem">${e.source}</td>
+      </tr>`).join('');
+  }
+});
+</script>
+</body>
+</html>
